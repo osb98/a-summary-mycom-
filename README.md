@@ -1,1 +1,1 @@
-# a-summary-mycom-
+# **a-summary of mycom (atmega128)**
