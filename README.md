@@ -27,7 +27,7 @@ delay문에서는 unsigned long int범위는 0∼4,294,967,295입니다.(p45참�
 (실측값은 오차가 있을수 있음)  
 
 ~~~
-//*출력과 입력 딜레이 사용 간단한 LED 0~7 ON OFF 예제*
+//**출력과 입력 딜레이 사용 간단한 LED 0~7 ON OFF 예제**
 #include <iom128.h>  
 void delay (unsigned long del) //언사인드 롱델 -와 + 부분에서 -부분을 플러스 쪽으로 넘겨 +부분 두배로 사용 선언   
 {  
