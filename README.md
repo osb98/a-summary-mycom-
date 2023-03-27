@@ -149,3 +149,61 @@ if(i==4) i=0;
 } while(1);
 }
 ~~~
+~~~
+//2상 여자 방식 사용 step motor 전진 
+#include<iom128.h>
+unsigned char data[4]={0x05, 0x06, 0x0a, 0x09};
+void delay(unsigned int del)
+{
+while(del--);
+}
+
+void main(void)
+{
+unsigned char i; // index
+DDRA=0x0f;
+
+do{
+PORTA=data[i];
+i++;
+delay(50000);
+delay(50000);
+delay(50000);
+delay(50000);
+delay(50000);
+delay(50000);
+delay(50000);
+delay(50000);
+delay(50000);
+delay(50000);
+
+if(i==4) i=0;
+} while(1);
+}
+~~
+~~
+//1,2상 여자 방식 모두 사용한 step motor 전진
+#include<iom128.h>
+unsigned char data[4]={0x01, 0x05, 0x04, 0x06, 0x02, 0x0a, 0x08, 0x09};
+void delay(unsigned int del)
+{
+while(del--);
+}
+
+void main(void)
+{
+unsigned char i; // index
+unsigned char k; // pulse counter
+DDRA=0x0f;
+
+for{k=0;k<50;k++}
+for{i=0;i<8;i++}{
+PORTA=data[i];
+
+delay(50000);
+delay(50000);
+
+} 
+}
+~~~
+~~~
