@@ -117,6 +117,7 @@ b B  A  A
   
   
 ### step motor 예제  
+  
 ~~~
 //1상 여자 방식 사용 step motor 전진  
 #include<iom128.h>
@@ -149,6 +150,7 @@ if(i==4) i=0;
 } while(1);
 }
 ~~~
+  
 ~~~
 //2상 여자 방식 사용 step motor 전진 
 #include<iom128.h>
@@ -180,8 +182,9 @@ delay(50000);
 if(i==4) i=0;
 } while(1);
 }
-~~
-~~
+~~~
+  
+~~~
 //1,2상 여자 방식 모두 사용한 step motor 전진
 #include<iom128.h>
 unsigned char data[4]={0x01, 0x05, 0x04, 0x06, 0x02, 0x0a, 0x08, 0x09};
@@ -206,4 +209,131 @@ delay(50000);
 } 
 }
 ~~~
+  
 ~~~
+//step motor pulse 계산
+step motor 에서 반지름=2cm, 1.8도/step, 50cm이동하려면 몇 스텝이 필요한가?
+1. 360/1.8 = 200
+2.  2x2x3.14  12.5 
+즉 200 pulse 에 12.5 cm 간다는 것이므로 
+50cm 이동할려면 약 800 pulse 정도 필요하다.
+~~~
+~~~
+//1상여자방식 사용 step motor 200 pulse 정방향 구동
+//1상 여자 방식이므로 200pulse로 한바퀴
+ #include<iom128.h>
+ unsigned char data[4]={0x01, 0x04, 0x02,0x08};
+ void delay(unsigned int del)
+ {
+ while(del--) ;
+ }
+
+ void main(void)
+ {
+ unsigned char i; //index
+ unsigned char k; //counter
+ DDRA=0x0f;
+
+
+
+      for (k=0;k<50;k++)
+        for(i=0;i<4;i++){
+        PORTA=data[i];
+        
+        delay(50000);
+        delay(50000);
+
+ }
+ }
+~~~
+  
+~~~
+//1,2상 여자 방식 사용 step motor 800pulse 정방향 구동
+//1,2상 여자 방식 모두 사용 했으므로 800pulse에 2바퀴 
+#include<iom128.h>
+ unsigned char data[8]={0x01, 0x05, 0x04,0x06, 0x02, 0x0a, 0x08,0x09};
+
+ void delay(unsigned int del)
+ {
+ while(del--) ;
+ }
+
+ void main(void)
+ {
+ unsigned char i; //index
+ unsigned char k; //pulse counter
+ DDRA=0x0f;
+ 
+ for(k=0;k<100;k++)
+ for(i=0;i<8;i++){
+ PORTA=data[i];
+ 
+ delay(50000); //speed 관여
+ delay(50000);
+ }
+ }
+~~~
+  
+~~~
+//1상 여자방식, 딜레이대신 타이머 오버플로 인터럽 이용 1초 지연 제어
+
+ #include<iom128.h>
+ // #include<ina90.h> Timer1연동
+
+ unsigned char data[4]={0x01, 0x04, 0x02,0x08};
+ unsigned char i; //index
+ #pragma vector=TIMER1_OVF_vect
+ __interrupt void TIMER1_OVF_interrupt(void)
+
+ {
+ PORTA=data[i];
+ i++; //1개씩 증가 i(인덱스)가
+ if(i==4) i=0;    //4개 발생시 딜레이 시작
+ TCNT1H=0xc7; //1초 딜레이 시정수
+ TCNT1L=0xbb;
+ }          //(#pragma ~ })ISR 정의 : 인터럽트발생시 해야 될 일
+
+ void main(void)
+ {
+ DDRA=0x0f;
+ TCNT1H=0xc7; //1초딜레이 시정수
+ TCNT1L=0xbb;
+ TCCR1A=0x00;
+ TCCR1B=0x05;//1024분주
+ TIMSK=0x04;//Timer overflow INT
+
+ SREG |= 0x80;
+ //__enable_interrupt();
+
+ while(1);
+ }
+ ~~~
+    
+ ~~~
+ //1상 여자방식을 1회전하고 2상여자방식으로 1회전하는 프로그램
+ #include<iom128.h>
+ unsigned char data1[4]={0x01, 0x04, 0x02,0x08};
+ unsigned char data2[4]={0x05, 0x06, 0x0a,0x09};
+
+ void delay(unsigned int del)
+ {
+ while(del--) ;
+ }
+
+ void main(void)
+ {
+ unsigned char i,k; //index
+ DDRA=0x0f;
+ for(k=0;k<50;k++)
+ for(i=0;i<4;i++){
+ PORTA=data1[i];
+ delay(50000);
+ }
+
+ for(k=50;k<100;k++)
+ for(i=0;i<4;i++){
+ PORTA=data2[i];
+ delay(50000);
+ }
+ }
+ ~~~
