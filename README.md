@@ -1,7 +1,7 @@
 # **a-summary-of-mycom (atmega128)**  
   
   
-### 들어가기전 간단히 알아야 할 것에 대하여  
+## 들어가기전 간단히 알아야 할 것에 대하여  
   
   
 1) 출력과 입력  
@@ -47,18 +47,18 @@ DDRB = Oxff; //b포트 출력설정
       while(1);  //반복선언
 }
 ~~~
-### 1. 외부 인터럽트  
+## 1. 외부 인터럽트  
 * 핵심 포인트  
 공간의 활용  
 상승 하강 신호  
 
-### 2. 타이머 인터럽트  
+## 2. 타이머 인터럽트  
 * 핵심 포인트  
 공간의 활용 
 시간개념 추가  
 시간계산 방법  
 
-### 3. step motor 
+## 3. step motor
 * 핵심 포인트  
 1) 1상여자 방식  
 A B a바 b바 순서로 내부 회로 구성   
@@ -113,3 +113,39 @@ b B  A  A
 (1.8도/step 인 경우  
 1상, 2상 여자방식은 200펄스로 1바퀴 움직이지만  
 모두 사용한 방식은 200펄스로 반바퀴 움직인다)**
+  
+  
+  
+### step motor 예제  
+~~~
+//1상 여자 방식 사용 step motor 전진  
+#include<iom128.h>
+unsigned char data[4]={0x01, 0x04, 0x02, 0x08};
+void delay(unsigned int del)
+{
+while(del--);
+}
+
+void main(void)
+{
+unsigned char i; // index
+DDRA=0x0f;
+
+do{
+PORTA=data[i];
+i++;
+delay(50000);
+delay(50000);
+delay(50000);
+delay(50000);
+delay(50000);
+delay(50000);
+delay(50000);
+delay(50000);
+delay(50000);
+delay(50000);
+
+if(i==4) i=0;
+} while(1);
+}
+~~~
